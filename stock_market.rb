@@ -3,6 +3,7 @@ require 'csv'
 class StockMarket
   def initialize(file_name)
     @file_name = file_name
+    @cash      = 1000000.00
   end
 
   def data_for(stock: '*', month:, year:)

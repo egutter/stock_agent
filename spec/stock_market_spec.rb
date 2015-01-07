@@ -21,6 +21,7 @@ describe StockMarket do
 
     it 'sets the source data instance variable' do
       expect(stock_market.instance_variable_get("@file_name")).to eq(filename)
+      expect(stock_market.instance_variable_get("@cash")).to eq(1000000.00)
     end
   end
 
