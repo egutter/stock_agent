@@ -15,7 +15,7 @@ describe StockMarket do
   end
 
   describe '#new' do
-    it 'receives one parameter with stock filename' do
+    it 'initializes an instance of StockMarket with a filename param' do
       expect(stock_market).to be_a(StockMarket)
     end
 
