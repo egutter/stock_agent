@@ -1,8 +1,6 @@
-require 'csv'
-
 class StockMarket
-  def initialize(file_name)
-    @file_name = file_name
+  def initialize(filename)
+    @filename = filename
     @cash      = 1000000.00
   end
 
@@ -13,12 +11,6 @@ class StockMarket
   end
 
   def source_data
-    @data ||= load_source_data
-  end
-
-  def load_source_data(tmp_data = [])
-    csv_text = File.read(@file_name)
-    csv      = CSV.parse(csv_text, :headers => true)
-    csv.map{|row| [row[0], Date.parse(row[1]), row[2].to_f] }
+    @data ||= StockHistoryImporter.run(@filename)
   end
 end

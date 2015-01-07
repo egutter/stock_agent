@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe StockMarket do
-  let(:filename)     { 'stock_history.csv' }
+  let(:filename)     { 'dummyfile.csv' }
   let(:source_data)  {
                         [
                           ['YPF', Date.parse('2014-07-01'), 25.5],
@@ -20,7 +20,7 @@ describe StockMarket do
     end
 
     it 'sets the source data instance variable' do
-      expect(stock_market.instance_variable_get("@file_name")).to eq(filename)
+      expect(stock_market.instance_variable_get("@filename")).to eq(filename)
       expect(stock_market.instance_variable_get("@cash")).to eq(1000000.00)
     end
   end
@@ -51,12 +51,9 @@ describe StockMarket do
     end
 
     it 'returns a two dimensional array with stock name, date and price' do
-      expect(stock_market.source_data).to be_a(Array)
-      expect(stock_market.source_data.first).to be_a(Array)
+      expect(StockHistoryImporter).to receive(:run).with(filename)
 
-      expect(stock_market.source_data.first[0]).to be_a(String)
-      expect(stock_market.source_data.first[1]).to be_a(Date)
-      expect(stock_market.source_data.first[2]).to be_a(Float)
+      stock_market.source_data
     end
   end
 end
