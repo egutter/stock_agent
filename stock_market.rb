@@ -8,7 +8,7 @@ class StockMarket
   end
 
   def price_at(name:, date:)
-    source_data["#{name}_#{date}"]
+    source_data[name][date.to_s]
   end
 
   def calc_percents(number:, percent: 1)

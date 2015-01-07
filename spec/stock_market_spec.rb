@@ -2,15 +2,19 @@ require 'spec_helper'
 
 describe StockMarket do
   let(:filename)     { 'dummyfile.csv' }
+  let(:stock_market) { StockMarket.new(filename) }
   let(:source_data)  {
                         {
-                          'YPF_2014-07-01' => 25.5,
-                          'YPF_2014-07-02' => 28.5,
-                          'TS_2014-07-01' => 27.5,
-                          'TS_2014-07-02' => 20.1
+                          'YPF' => {
+                            '2014-07-01' => 25.5,
+                            '2014-07-02' => 28.5,
+                          },
+                          'TS' => {
+                            '2014-07-01' => 27.5,
+                            '2014-07-02' => 20.1
+                          }
                         }
                       }
-  let(:stock_market) { StockMarket.new(filename) }
 
   before do
     allow(stock_market).to receive(:source_data).and_return(source_data)
