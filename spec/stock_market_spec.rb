@@ -3,10 +3,12 @@ require 'spec_helper'
 describe StockMarket do
   let(:filename)     { 'dummyfile.csv' }
   let(:source_data)  {
-                        [
-                          ['YPF', Date.parse('2014-07-01'), 25.5],
-                          ['TS', Date.parse('2014-07-01'), 27.5]
-                        ]
+                        {
+                          'YPF_2014-07-01' => 25.5,
+                          'YPF_2014-07-02' => 28.5,
+                          'TS_2014-07-01' => 27.5,
+                          'TS_2014-07-02' => 20.1
+                        }
                       }
   let(:stock_market) { StockMarket.new(filename) }
 
@@ -54,6 +56,12 @@ describe StockMarket do
       expect(StockHistoryImporter).to receive(:run).with(filename)
 
       stock_market.source_data
+    end
+  end
+
+  describe '#price_at' do
+    it 'returns the price of a stock on a specific date' do
+      expect(stock_market.price_at(name: 'YPF', date: '2014-07-01')).to eq(25.5)
     end
   end
 end
