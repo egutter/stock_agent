@@ -5,8 +5,10 @@ class StockMarket
     @file_name = file_name
   end
 
-  def data_for(month:, year:)
-    source_data.reject{|row| row[1].month != month || row[1].year != year }
+  def data_for(stock: '*', month:, year:)
+    _data = source_data.reject{|row| row[1].month != month || row[1].year != year }
+    _data = source_data.reject{|row| row[0] != stock } if stock != '*'
+    _data
   end
 
   def source_data

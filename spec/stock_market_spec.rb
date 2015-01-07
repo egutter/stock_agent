@@ -2,7 +2,12 @@ require 'spec_helper'
 
 describe StockMarket do
   let(:filename)     { 'stock_history.csv' }
-  let(:source_data)  { [['YPF', Date.parse('2014-07-01'), 25.5]] }
+  let(:source_data)  {
+                        [
+                          ['YPF', Date.parse('2014-07-01'), 25.5],
+                          ['TS', Date.parse('2014-07-01'), 27.5]
+                        ]
+                      }
   let(:stock_market) { StockMarket.new(filename) }
 
   before do
@@ -20,8 +25,8 @@ describe StockMarket do
   end
 
   describe '#data_for' do
-    context 'source data provides only data for july 2014' do
-      it 'returns array of data for the given month and year' do
+    context 'source data provides only one price for YPF and TS stock in july 2014' do
+      it 'returns array of all data for the given month and year' do
         expect(stock_market.data_for(month: 7, year: 2014)).to eq(source_data)
       end
 
@@ -31,6 +36,10 @@ describe StockMarket do
 
       it 'returns empty array for july 2015' do
         expect(stock_market.data_for(month: 7, year: 2015)).to be_empty
+      end
+
+      it 'only returns YPF stock' do
+        expect(stock_market.data_for(stock: 'YPF', month: 7, year: 2014)).to eq([source_data.first])
       end
     end
   end
