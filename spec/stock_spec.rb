@@ -104,4 +104,42 @@ describe Stock do
       end
     end
   end
+
+  describe '#rise_exceeded_within?' do
+    it 'returns true for a rise of exactly 1%' do
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(26.0)
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(26.26)
+
+      expect(
+        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
+      ).to eq(true)
+    end
+
+    it 'returns true for a rise of more than 1%' do
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(26.0)
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(28.0)
+
+      expect(
+        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
+      ).to eq(true)
+    end
+
+    it 'returns false for a price fall' do
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(28.0)
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(20.0)
+
+      expect(
+        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
+      ).to eq(false)
+    end
+
+    it 'returns false for a consistent price' do
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(28.0)
+      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(22.0)
+
+      expect(
+        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
+      ).to eq(false)
+    end
+  end
 end
