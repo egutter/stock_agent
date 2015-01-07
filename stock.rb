@@ -13,7 +13,7 @@ class Stock
   end
 
   def diff(value1, value2)
-    (value1 - value2).round(1)
+    (value1 - value2).round(2)
   end
 
   def rise_exceeded_within?(range, percent=1)

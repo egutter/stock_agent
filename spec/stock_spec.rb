@@ -44,8 +44,8 @@ describe Stock do
       expect(stock.diff(1.0, 0.2)).to eq(0.8)
     end
 
-    it 'rounds the result to one decimal place' do
-      expect(stock.diff(1.0001, 0.2003)).to eq(0.8)
+    it 'rounds the result to two decimal places' do
+      expect(stock.diff(1.123456789, 0.23456789)).to eq(0.89)
     end
 
     it 'calculates the diff between two zeroes' do
