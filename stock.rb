@@ -16,7 +16,7 @@ class Stock
     (value1 - value2).round(2)
   end
 
-  def self.maximum_amount(cash_limit, price)
+  def self.maximum_purchaseable_amount(cash_limit, price)
     return 0 if !cash_limit.is_a?(Numeric) || !price.is_a?(Numeric) || price <= 0 || cash_limit <= 0
     (cash_limit / price).to_i
   end
@@ -35,5 +35,11 @@ class Stock
     prev_day = date - 1
 
     price_at(prev_day).nil? ? previous_day(prev_day) : prev_day
+  end
+
+  def last_business_day_of_month(date)
+    @stock_data[@stock_name].reject{ |k,v|
+      v.nil? || !k.to_s.match(/#{date.year}-#{date.month.to_s.rjust(2, "0")}-\d{2}/)
+    }.keys.sort.last
   end
 end

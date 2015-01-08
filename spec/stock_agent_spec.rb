@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe StockAgent do
-  let(:agent) { StockAgent.new(['YPF']) }
+  let(:stock) { 'YPF' }
+  let(:agent) { StockAgent.new([stock]) }
 
   describe '#new' do
     it 'initializes an instance of Agent' do

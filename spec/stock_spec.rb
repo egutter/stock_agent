@@ -137,6 +137,24 @@ describe Stock do
     end
   end
 
+  describe '#last_business_day_of_month' do
+    let(:source_data) {
+                        {
+                          'YPF' => {
+                            '2014-07-07' => 25.5,
+                            '2014-07-03' => 28.5,
+                            '2014-07-30' => 27.5,
+                            '2014-07-31' => nil,
+                            '2014-07-02' => 20.1
+                          }
+                        }
+                      }
+
+    it 'returns the last day of month with data' do
+      expect(stock.last_business_day_of_month(Date.parse('2014-07-02'))).to eq('2014-07-30')
+    end
+  end
+
   describe '#previous_day (with data)' do
     it 'should return the 2014-07-01' do
       allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
@@ -164,40 +182,46 @@ describe Stock do
     end
   end
 
-  describe '.maximum_amount' do
+  describe '.price_of' do
+    it 'returns the total price of stocks' do
+      expect(Stock.price_of(10.453, 12.1234)).to eq(126.65)
+    end
+  end
+
+  describe '.maximum_purchaseable_amount' do
     context 'when stock price is at $10' do
       it 'returns 100 if cash limit is $1000' do
-        expect(Stock.maximum_amount(1000.00, 10)).to eq(100)
+        expect(Stock.maximum_purchaseable_amount(1000.00, 10)).to eq(100)
       end
 
       it 'returns 0 if cash limit is $0' do
-        expect(Stock.maximum_amount(0, 10)).to eq(0)
+        expect(Stock.maximum_purchaseable_amount(0, 10)).to eq(0)
       end
 
       it 'returns 100 if cash limit is -$100' do
-        expect(Stock.maximum_amount(-100, 10)).to eq(0)
+        expect(Stock.maximum_purchaseable_amount(-100, 10)).to eq(0)
       end
 
       it 'returns 0 if cash limit is nil' do
-        expect(Stock.maximum_amount(nil, 10)).to eq(0)
+        expect(Stock.maximum_purchaseable_amount(nil, 10)).to eq(0)
       end
     end
 
     context 'when cash limit is at $1000' do
       it 'returns 0 if stock price is at -$10' do
-        expect(Stock.maximum_amount(1000.00, -10)).to eq(0)
+        expect(Stock.maximum_purchaseable_amount(1000.00, -10)).to eq(0)
       end
 
       it 'returns 0 if stock price is at $0' do
-        expect(Stock.maximum_amount(1000.00, 0)).to eq(0)
+        expect(Stock.maximum_purchaseable_amount(1000.00, 0)).to eq(0)
       end
 
       it 'returns 0 if stock price is at $26' do
-        expect(Stock.maximum_amount(1000.00, 26)).to eq(38)
+        expect(Stock.maximum_purchaseable_amount(1000.00, 26)).to eq(38)
       end
 
       it 'returns 0 if stock price is at nil' do
-        expect(Stock.maximum_amount(1000.00, nil)).to eq(0)
+        expect(Stock.maximum_purchaseable_amount(1000.00, nil)).to eq(0)
       end
     end
   end
