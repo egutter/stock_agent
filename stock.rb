@@ -29,13 +29,13 @@ class Stock
     (cash_limit / price).to_i
   end
 
-  def price_change_for_day(day1)
-    price_at_day1 = price_at(previous_day(day1))
-    price_at_day2 = price_at(day1)
+  def price_change_for_day(current_day, ref_day=nil)
+    price_at_current_day = price_at(current_day)
+    price_at_ref_day     = price_at(ref_day || previous_day(current_day))
 
-    return if price_at_day1.nil? || price_at_day2.nil?
+    return if price_at_current_day.nil? || price_at_ref_day.nil?
 
-    (Stock.diff(price_at_day2, price_at_day1) / Stock.calc_percents(number: price_at_day1, percent: 1)).round(2)
+    (Stock.diff(price_at_current_day, price_at_ref_day) / Stock.calc_percents(number: price_at_ref_day, percent: 1)).round(2)
   end
 
   def previous_day(date)
