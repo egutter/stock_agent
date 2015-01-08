@@ -1,9 +1,11 @@
 class StockAgent
-  def initialize
-    @cash = 1000000.00
+  def initialize(stocks)
+    @total_cash   = 1000000.00
+    @stocks = stocks
   end
 
-  def cash
-    @cash
+  def total_cash
+    @total_cash
+  end
   end
 end
