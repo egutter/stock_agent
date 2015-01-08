@@ -38,6 +38,28 @@ describe StockAgent do
     end
   end
 
+  describe '#sell' do
+    before do
+      allow_any_instance_of(Stock).to receive(:price_at).and_return(10.00)
+    end
+
+    it 'sell all 10 stocks for $10.00 each' do
+      allow(agent).to receive(:amount_of).with(stock).and_return(10)
+
+      expect(agent.total_cash).to eq(1000000.00)
+      expect(agent.sell('YPF', '2014-04-02')).to eq(true)
+      expect(agent.total_cash).to eq(1000100.00)
+    end
+
+    it 'does not sell if number of stocks is 0' do
+      allow(agent).to receive(:amount_of).with(stock).and_return(0)
+
+      expect(agent.total_cash).to eq(1000000.00)
+      expect(agent.sell('YPF', '2014-04-02')).to eq(false)
+      expect(agent.total_cash).to eq(1000000.00)
+    end
+  end
+
   describe '#cash_for_purchase' do
     context 'purchase limit is default at $1000.00' do
       it 'returns $10.00 if total_cash is 10.00' do

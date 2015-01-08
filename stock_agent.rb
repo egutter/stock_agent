@@ -36,6 +36,23 @@ class StockAgent
     false
   end
 
+  def sell(stock, date, old_balance=@total_cash)
+    price           = Stock.new(stock).price_at(date)
+    amount          = amount_of(stock)
+    price_of_stocks = Stock.price_of(amount, price)
+
+    if amount > 0
+      @total_cash = (old_balance + price_of_stocks).round(2)
+
+      set_amount_of(stock, 0)
+      save_transaction(date, stock, :sell, amount, price)
+
+      return true
+    end
+
+    false
+  end
+
   def cash_for_purchase(limit=1000.00)
     total_cash >= limit ? limit : total_cash
   end
