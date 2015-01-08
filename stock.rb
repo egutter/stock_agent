@@ -4,8 +4,16 @@ class Stock
     @stock_data ||= StockHistoryImporter.run(filename)
   end
 
+  def name
+    @stock_name
+  end
+
   def price_at(date)
     @stock_data[@stock_name][date.to_s]
+  end
+
+  def self.price_of(amount, price)
+    (amount.round(2) * price.round(2)).round(2)
   end
 
   def self.calc_percents(number:, percent: 1)
