@@ -31,7 +31,7 @@ describe Stock do
 
   describe '#price_at' do
     it 'returns the price of a stock on a specific date' do
-      expect(stock.price_at(date: '2014-07-01')).to eq(25.5)
+      expect(stock.price_at('2014-07-01')).to eq(25.5)
     end
   end
 
@@ -105,41 +105,62 @@ describe Stock do
     end
   end
 
-  describe '#rise_exceeded_within?' do
-    it 'returns true for a rise of exactly 1%' do
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(26.0)
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(26.26)
 
-      expect(
-        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
-      ).to eq(true)
+  describe '#price_change_for_day' do
+    it 'returns price change of 1% compare to previous day' do
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
+
+      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(1.0)
     end
 
-    it 'returns true for a rise of more than 1%' do
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(26.0)
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(28.0)
+    it 'returns nil if previous day provides no data' do
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(nil)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
+      allow(stock).to receive(:price_at).with(nil).and_return(nil)
 
-      expect(
-        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
-      ).to eq(true)
+      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(nil)
     end
 
-    it 'returns false for a price fall' do
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(28.0)
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(20.0)
+    it 'returns nil if day provides no data' do
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(nil)
 
-      expect(
-        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
-      ).to eq(false)
+      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(nil)
     end
 
-    it 'returns false for a consistent price' do
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-01')).and_return(28.0)
-      allow(stock).to receive(:price_at).with(date: Date.parse('2014-07-02')).and_return(22.0)
+    it 'returns 0.0% price is consistent' do
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.0)
 
-      expect(
-        stock.rise_exceeded_within?(Date.parse('2014-07-01')..Date.parse('2014-07-02'))
-      ).to eq(false)
+      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(0.0)
+    end
+  end
+
+  describe '#previous_day (with data)' do
+    it 'should return the 2014-07-01' do
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.0)
+
+      expect(stock.previous_day(Date.parse('2014-07-02'))).to eq(Date.parse('2014-07-01'))
+    end
+
+    it 'should return the 2014-07-01' do
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(nil)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-03')).and_return(nil)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-04')).and_return(26.0)
+
+      expect(stock.previous_day(Date.parse('2014-07-04'))).to eq(Date.parse('2014-07-01'))
+    end
+
+    it 'should return nil if no previous day with data can be found' do
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(nil)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(nil)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-03')).and_return(nil)
+      allow(stock).to receive(:price_at).with(Date.parse('2014-07-04')).and_return(26.0)
+
+      expect(stock.previous_day(Date.parse('2014-07-04'))).to eq(nil)
     end
   end
 end

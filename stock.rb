@@ -4,7 +4,7 @@ class Stock
     @stock_data ||= StockHistoryImporter.run(filename)
   end
 
-  def price_at(date:)
+  def price_at(date)
     @stock_data[@stock_name][date.to_s]
   end
 
@@ -16,13 +16,19 @@ class Stock
     (value1 - value2).round(2)
   end
 
-  def rise_exceeded_within?(range, percent=1)
-    price_at_day1 = price_at(date: range.begin)
-    price_at_day2 = price_at(date: range.end)
+  def price_change_for_day(day1)
+    price_at_day1 = price_at(previous_day(day1))
+    price_at_day2 = price_at(day1)
 
-    price_rise      = diff(price_at_day2, price_at_day1)
-    percent_of_day1 = calc_percents(number: price_at_day1, percent: percent)
+    return if price_at_day1.nil? || price_at_day2.nil?
 
-    price_rise >= percent_of_day1
+    diff(price_at_day2, price_at_day1) / calc_percents(number: price_at_day1, percent: 1)
+  end
+
+  def previous_day(date)
+    return if date.day == 1
+    prev_day = date - 1
+
+    price_at(prev_day).nil? ? previous_day(prev_day) : prev_day
   end
 end
