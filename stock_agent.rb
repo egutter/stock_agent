@@ -1,10 +1,13 @@
 class StockAgent
   def initialize(stocks, start_cash=1000000.00)
     @total_cash   = start_cash
-    @stocks       = stocks
     @transactions = []
-    @current_amount_of_stocks = {}
-    stocks.each {|stock| @current_amount_of_stocks[stock] = 0 }
+    @stocks = {}
+    stocks.each { |stock| @stocks[stock] = {} }
+  end
+
+  def stocks
+    @stocks.keys
   end
 
   def total_cash
@@ -12,11 +15,26 @@ class StockAgent
   end
 
   def amount_of(stock)
-    @current_amount_of_stocks[stock]
+    return 0 if @stocks[stock].empty?
+    @stocks[stock].map{|k,v| v[:amount] }.inject(:+)
   end
 
-  def set_amount_of(stock, value)
-    @current_amount_of_stocks[stock] = value
+  def set_amount_of_stocks(stock, date, amount, price)
+    _date = date.to_s
+
+    return false if !_date.match(/\A\d{4}-\d{2}-\d{2}\z/)
+    return false if amount.nil? || amount == 0
+    return false if price.nil?  || price == 0
+    return false if !@stocks[stock] || @stocks[stock].has_key?(_date)
+
+    @stocks[stock][_date]          = {}
+    @stocks[stock][_date][:price]  = price
+    @stocks[stock][_date][:amount] = amount
+    true
+  end
+
+  def reset_stocks_for(stock, date)
+    @stocks[stock].delete(date)
   end
 
   def buy(stock, date, old_balance=@total_cash)
@@ -27,7 +45,7 @@ class StockAgent
     if @total_cash >= price_of_stocks && amount > 0
       @total_cash = (old_balance - price_of_stocks).round(2)
 
-      set_amount_of(stock, amount_of(stock) + amount)
+      set_amount_of_stocks(stock, date, amount, price)
       save_transaction(date, stock, :buy, amount, price)
 
       return true
@@ -44,7 +62,7 @@ class StockAgent
     if amount > 0
       @total_cash = (old_balance + price_of_stocks).round(2)
 
-      set_amount_of(stock, 0)
+      reset_stocks_for(stock, date)
       save_transaction(date, stock, :sell, amount, price)
 
       return true
