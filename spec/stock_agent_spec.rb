@@ -107,46 +107,43 @@ describe StockAgent do
   end
 
   describe '#set_amount_of_stocks' do
-    it 'is storing the transaction' do
+    before do
       expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
+    end
+
+    it 'is storing the transaction' do
       expect(agent.set_amount_of_stocks('YPF', '2001-01-01', 1337, 13.3)).to eq(true)
       expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{'2001-01-01'=>{price: 13.3, amount: 1337}}})
     end
 
-    it 'does not set if stock name is invalid' do
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-      expect(agent.set_amount_of_stocks('FOO', '2001-01-01', 1337, 1)).to eq(false)
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-    end
+    context 'input is invalid' do
+      after do
+        expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
+      end
 
-    it 'does not set if amount is 0' do
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-      expect(agent.set_amount_of_stocks('YPF', '2001-01-01', 0, 13.3)).to eq(false)
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-    end
+      it 'does not set if stock name is invalid' do
+        expect(agent.set_amount_of_stocks('FOO', '2001-01-01', 1337, 1)).to eq(false)
+      end
 
-    it 'does not set if amount is nil' do
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-      expect(agent.set_amount_of_stocks('YPF', '2001-01-01', nil, 0.4)).to eq(false)
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-    end
+      it 'does not set if amount is 0' do
+        expect(agent.set_amount_of_stocks('YPF', '2001-01-01', 0, 13.3)).to eq(false)
+      end
 
-    it 'does not set if price is 0' do
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-      expect(agent.set_amount_of_stocks('YPF', '2001-01-01', 1337, 0)).to eq(false)
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-    end
+      it 'does not set if amount is nil' do
+        expect(agent.set_amount_of_stocks('YPF', '2001-01-01', nil, 0.4)).to eq(false)
+      end
 
-    it 'does not set if price is nil' do
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-      expect(agent.set_amount_of_stocks('YPF', '2001-01-01', 1337, nil)).to eq(false)
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-    end
+      it 'does not set if price is 0' do
+        expect(agent.set_amount_of_stocks('YPF', '2001-01-01', 1337, 0)).to eq(false)
+      end
 
-    it 'does not set if date format is invalid' do
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
-      expect(agent.set_amount_of_stocks('YPF', '2001-01-022221', 1337, 1)).to eq(false)
-      expect(agent.instance_variable_get("@stocks")).to eq({'YPF'=>{}})
+      it 'does not set if price is nil' do
+        expect(agent.set_amount_of_stocks('YPF', '2001-01-01', 1337, nil)).to eq(false)
+      end
+
+      it 'does not set if date format is invalid' do
+        expect(agent.set_amount_of_stocks('YPF', '2001-01-022221', 1337, 1)).to eq(false)
+      end
     end
   end
 end
