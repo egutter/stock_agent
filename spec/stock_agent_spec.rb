@@ -40,6 +40,24 @@ describe StockAgent do
     end
   end
 
+  describe '#amount_of_stock_purchased_at' do
+    before do
+      agent.instance_variable_set(:@stocks, {'YPF' => {'2001-01-01'=> {amount: 10}}, 'GGAL' => {}})
+    end
+
+    it 'returns correct number of stock amount' do
+      expect(agent.amount_of_stock_purchased_at('YPF', '2001-01-01')).to eq(10)
+    end
+
+    it 'returns zero if date param is invalid' do
+      expect(agent.amount_of_stock_purchased_at('YPF', 1)).to eq(0)
+    end
+
+    it 'returns zero if stock param is invalid' do
+      expect(agent.amount_of_stock_purchased_at(1, '2001-01-01')).to eq(0)
+    end
+  end
+
   describe '#buy' do
     before do
       allow_any_instance_of(Stock).to receive(:price_at).and_return(10.00)

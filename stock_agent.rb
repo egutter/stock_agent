@@ -23,6 +23,11 @@ class StockAgent
     @stocks[stock].map{|k,v| v[:amount] }.inject(:+)
   end
 
+  def amount_of_stock_purchased_at(stock, date)
+    return 0 if !stock_assets(stock)[date]
+    stock_assets(stock)[date][:amount]
+  end
+
   def set_amount_of_stocks(stock, date, amount, price)
     _date = date.to_s
 
