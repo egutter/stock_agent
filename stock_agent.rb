@@ -80,7 +80,7 @@ class StockAgent
     false
   end
 
-  def sell_all_stocks_of(stock, sell_date)
+  def sell_all_of_stock(stock, sell_date)
     stock_assets(stock).each do |buy_date, data|
       sell(stock, buy_date, sell_date)
     end
@@ -88,7 +88,7 @@ class StockAgent
 
   def sell_all(sell_date)
     stocks.each do |stock|
-      sell_all_stocks_of(stock, sell_date)
+      sell_all_of_stock(stock, sell_date)
     end
   end
 

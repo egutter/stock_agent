@@ -213,9 +213,9 @@ describe StockAgent do
       end
     end
 
-    describe '#sell_all_stocks_of' do
+    describe '#sell_all_of_stock' do
       it 'sells all YPF stocks' do
-        agent.sell_all_stocks_of('YPF', '2001-01-31')
+        agent.sell_all_of_stock('YPF', '2001-01-31')
 
         expect(agent.amount_of('YPF')).to eq(0)
         expect(agent.amount_of('FOO')).to eq(42)
