@@ -4,4 +4,4 @@ ruby '2.1.2'
 
 gem 'rspec'
 gem 'guard-rspec'
-gem 'pry'
+gem 'pry-byebug'
