@@ -188,4 +188,29 @@ describe StockAgent do
       end
     end
   end
+
+  describe '#sell_all' do
+    context 'agent owns multiple stocks' do
+      let(:stocks) { ['YPF', 'FOO', 'BAR'] }
+
+      before do
+        agent.set_amount_of_stocks('YPF', '2001-01-01', 1337, 13.3)
+        agent.set_amount_of_stocks('YPF', '2001-01-10', 1, 20.0)
+        agent.set_amount_of_stocks('FOO', '2001-01-30', 42, 0.1)
+        agent.set_amount_of_stocks('BAR', '2001-01-07', 1111, 1234.9)
+
+        expect(agent.amount_of('YPF')).to eq(1338)
+
+        allow_any_instance_of(Stock).to receive(:price_at).with('2001-01-31').and_return(13.00)
+      end
+
+      it 'sells all stocks on the 2001-01-31' do
+        agent.sell_all('2001-01-31')
+
+        expect(agent.amount_of('YPF')).to eq(0)
+        expect(agent.amount_of('FOO')).to eq(0)
+        expect(agent.amount_of('BAR')).to eq(0)
+      end
+    end
+  end
 end

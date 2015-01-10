@@ -80,6 +80,14 @@ class StockAgent
     false
   end
 
+  def sell_all(sell_date)
+    stocks.each do |stock|
+      stock_assets(stock).each do |buy_date, data|
+        sell(stock, buy_date, sell_date)
+      end
+    end
+  end
+
   def cash_for_purchase(limit=1000.00)
     total_cash >= limit ? limit : total_cash
   end
