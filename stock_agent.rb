@@ -71,8 +71,8 @@ class StockAgent
     if amount > 0
       @total_cash = (old_balance + price_of_stocks).round(2)
 
+      save_transaction(sell_date, stock, :sell, amount, price, buy_date, stock_assets(stock)[buy_date][:price])
       reset_stocks_for(stock, buy_date)
-      save_transaction(sell_date, stock, :sell, amount, price)
 
       return true
     end
@@ -106,11 +106,12 @@ class StockAgent
     end
   end
 
-  def save_transaction(date, stock, action, amount, price)
-    @transactions << "#{date} #{stock} #{action} #{amount} for #{price} (#{Stock.price_of(amount, price)})"
+  def save_transaction(date, stock, action, amount, price, buy_date=nil, old_stock_price=nil)
+    _sell_date = " (bought at #{buy_date} for #{old_stock_price})" if buy_date && old_stock_price
+    @transactions << "#{date} #{stock} #{action} #{amount} for #{price} (#{Stock.price_of(amount, price)})#{_sell_date}"
   end
 
   def list_transactions
-    @transactions.each{|t| p t}
+    @transactions.each{|t| puts t}
   end
 end

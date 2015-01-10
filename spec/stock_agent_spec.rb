@@ -86,7 +86,7 @@ describe StockAgent do
     end
 
     it 'sell all 10 stocks for $10.00 each' do
-      allow(agent).to receive(:amount_of_stock_purchased_at).with(stocks.first, '2001-01-01').and_return(10)
+      agent.set_amount_of_stocks('YPF', '2001-01-01', 10, 13.3)
 
       expect(agent.total_cash).to eq(1000000.00)
       expect(agent.sell('YPF', '2001-01-01', '2014-04-02')).to eq(true)
@@ -94,8 +94,6 @@ describe StockAgent do
     end
 
     it 'does not sell if number of stocks is 0' do
-      allow(agent).to receive(:amount_of_stock_purchased_at).with(stocks.first, '2001-01-01').and_return(0)
-
       expect(agent.total_cash).to eq(1000000.00)
       expect(agent.sell('YPF', '2001-01-01', '2014-04-02')).to eq(false)
       expect(agent.total_cash).to eq(1000000.00)
