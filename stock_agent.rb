@@ -10,6 +10,10 @@ class StockAgent
     @stocks.keys
   end
 
+  def stock_assets(stock)
+    @stocks[stock] || {}
+  end
+
   def total_cash
     @total_cash
   end

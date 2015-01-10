@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe StockAgent do
-  let(:stock) { 'YPF' }
-  let(:agent) { StockAgent.new([stock]) }
+  let(:stocks) { ['YPF'] }
+  let(:agent)  { StockAgent.new(stocks) }
 
   describe '#new' do
     it 'initializes an instance of Agent' do
@@ -13,6 +13,30 @@ describe StockAgent do
   describe '#total_cash' do
     it 'gets initialized with 1 million' do
       expect(agent.total_cash).to eq(1000000.00)
+    end
+  end
+
+  describe '#stock_assets' do
+    before do
+      agent.instance_variable_set(:@stocks, {'YPF' => {'2001'=> :foo}, 'GGAL' => {}})
+    end
+
+    it 'returns empty stock transactions for GGAL' do
+      expect(agent.stock_assets('GGAL')).to be_a(Hash)
+      expect(agent.stock_assets('GGAL')).to be_empty
+    end
+
+    it 'returns empty stock transactions for a non existent stock' do
+      expect(agent.stock_assets('FOO')).to be_a(Hash)
+      expect(agent.stock_assets('FOO')).to be_empty
+    end
+
+    it 'returns agent stock transactions for YPF' do
+      expect(agent.stock_assets('YPF')).to eq({'2001'=> :foo})
+    end
+
+    it 'returns agent stock transactions for YPF' do
+      expect(agent.stock_assets('YPF')).to eq({'2001'=> :foo})
     end
   end
 
