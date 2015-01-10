@@ -1,3 +1,5 @@
+require 'pry'
+
 class StockAgent
   def initialize(stocks, start_cash=1000000.00)
     @total_cash   = start_cash
@@ -96,13 +98,42 @@ class StockAgent
     total_cash >= limit ? limit : total_cash
   end
 
+  def strategy1(date)
+    stocks.each do |stock_name|
+      stock = Stock.new(stock_name)
+
+      price_change_for_purchase = stock.price_change_for_day(date)
+
+      if price_change_for_purchase
+        if date.to_s == stock.last_business_day_of_month(date)
+          sell_all(date.to_s)
+        elsif price_change_for_purchase <= -1.0
+          buy(stock_name, date)
+        end
+      end
+
+      stock_assets(stock_name).each do |buy_date, data|
+        price_change_for_sell = stock.price_change_for_day(buy_date, date)
+
+        if price_change_for_sell && price_change_for_sell >= 2.0 && amount_of(stock_name) > 0
+          sell(stock_name, buy_date, date)
+        end
+      end
+    end
+
+    return true
+  end
+
+  def strategy2(date)
+  end
+
   def transfer_money(account_balance, value, action)
     case action
     when :buy
       return if account_balance < value
-      return account_balance - value
+      account_balance - value
     when :sell
-      return account_balance + value
+      account_balance + value
     end
   end
 

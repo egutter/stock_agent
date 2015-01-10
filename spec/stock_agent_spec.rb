@@ -221,4 +221,13 @@ describe StockAgent do
       end
     end
   end
+
+  describe '#strategy1' do
+    it 'buys a stock if price dropped 1%' do
+      allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-1.0)
+
+      expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+      expect(agent.amount_of('YPF')).to eq(31)
+    end
+  end
 end
