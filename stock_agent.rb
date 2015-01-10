@@ -63,16 +63,16 @@ class StockAgent
     false
   end
 
-  def sell(stock, date, old_balance=@total_cash)
-    price           = Stock.new(stock).price_at(date)
-    amount          = amount_of(stock)
+  def sell(stock, buy_date, sell_date, old_balance=@total_cash)
+    price           = Stock.new(stock).price_at(sell_date)
+    amount          = amount_of_stock_purchased_at(stock, buy_date)
     price_of_stocks = Stock.price_of(amount, price)
 
     if amount > 0
       @total_cash = (old_balance + price_of_stocks).round(2)
 
-      reset_stocks_for(stock, date)
-      save_transaction(date, stock, :sell, amount, price)
+      reset_stocks_for(stock, buy_date)
+      save_transaction(sell_date, stock, :sell, amount, price)
 
       return true
     end
