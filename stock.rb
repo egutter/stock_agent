@@ -4,14 +4,6 @@ class Stock
     @stock_data ||= StockHistoryImporter.run(filename)
   end
 
-  def name
-    @stock_name
-  end
-
-  def price_at(date)
-    @stock_data[@stock_name][date.to_s]
-  end
-
   def self.price_of(amount, price)
     (amount.round(2) * price.round(2)).round(2)
   end
@@ -27,6 +19,14 @@ class Stock
   def self.maximum_purchaseable_amount(cash_limit, price)
     return 0 if !cash_limit.is_a?(Numeric) || !price.is_a?(Numeric) || price <= 0 || cash_limit <= 0
     (cash_limit / price).to_i
+  end
+
+  def name
+    @stock_name
+  end
+
+  def price_at(date)
+    @stock_data[@stock_name][date.to_s]
   end
 
   def price_change_for_day(current_day, ref_day=nil)
