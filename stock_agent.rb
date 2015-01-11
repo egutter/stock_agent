@@ -115,7 +115,7 @@ class StockAgent
       stock_assets(stock_name).each do |buy_date, data|
         price_change_for_sell = stock.price_change_for_day(buy_date, date)
 
-        if price_change_for_sell && price_change_for_sell >= 2.0 && amount_of(stock_name) > 0
+        if amount_of(stock_name) > 0 && price_change_for_sell && price_change_for_sell >= 2.0
           sell(stock_name, buy_date, date)
         end
       end
@@ -125,6 +125,29 @@ class StockAgent
   end
 
   def strategy2(date)
+    stocks.each do |stock_name|
+      stock = Stock.new(stock_name)
+
+      price_change_for_purchase = stock.price_change_for_day(date)
+
+      if price_change_for_purchase
+        if date.to_s == stock.last_business_day_of_month(date)
+          sell_all(date.to_s)
+        elsif price_change_for_purchase <= -1.0
+          buy(stock_name, date)
+        end
+      end
+
+      stock_assets(stock_name).each do |buy_date, data|
+        price_change_for_sell = stock.price_change_for_day(buy_date, date.to_s)
+
+        if amount_of(stock_name) > 0 && (date-5) >= Date.parse(buy_date)
+          sell(stock_name, buy_date, date)
+        end
+      end
+    end
+
+    return true
   end
 
   def transfer_money(account_balance, value, action)
@@ -134,6 +157,8 @@ class StockAgent
       account_balance - value
     when :sell
       account_balance + value
+    else
+      raise
     end
   end
 

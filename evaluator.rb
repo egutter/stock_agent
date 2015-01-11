@@ -11,7 +11,7 @@ class Evaluator
       agent2.strategy2(date)
     end
 
-    agent1.list_transactions
+    # agent1.list_transactions
     agent2.list_transactions
 
     puts "agent1 cash: #{agent1.total_cash}"

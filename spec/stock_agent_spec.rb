@@ -223,11 +223,158 @@ describe StockAgent do
   end
 
   describe '#strategy1' do
-    it 'buys a stock if price dropped 1%' do
-      allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-1.0)
+    context 'has 1337 stocks of YPF' do
+      before do
+        agent.set_amount_of_stocks('YPF', '2001-04-01', 1337, 13.3)
+        expect(agent.amount_of('YPF')).to eq(1337)
+      end
 
-      expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
-      expect(agent.amount_of('YPF')).to eq(31)
+      # current implementation might be wrong
+      # sell might depend on price rise comparing dayX with previous day
+      # and not dayX with buy date
+
+      it 'does not sell a stocks if price rose only 1%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(1.0)
+
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(1337)
+      end
+
+      it 'sells a stock if price rose 2%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(2.0)
+
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+
+      it 'sells a stock if price rose 3%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(3.0)
+
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+    end
+
+    context 'price drop' do
+      it 'does not buy a stock if price dropped 0.9%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-0.99)
+
+        expect(agent.amount_of('YPF')).to eq(0)
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+
+      it 'buys a stock if price dropped 1%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-1.0)
+
+        expect(agent.amount_of('YPF')).to eq(0)
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(31)
+      end
+
+      it 'buys a stock if price dropped 2%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-2.0)
+
+        expect(agent.amount_of('YPF')).to eq(0)
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(31)
+      end
+    end
+
+    it 'sells all stocks at the last day of month' do
+      agent.set_amount_of_stocks('YPF', '2001-04-01', 1337, 13.3)
+      agent.set_amount_of_stocks('YPF', '2001-04-02', 13, 13.3)
+
+      expect(agent.amount_of('YPF')).to eq(1350)
+      expect(agent.strategy1(Date.parse('2014-04-30'))).to eq(true)
+      expect(agent.amount_of('YPF')).to eq(0)
+    end
+  end
+
+  describe '#strategy2' do
+    it 'buy a stock if the price is equal to at least twice the average quotation of the share until that date'
+
+    context 'has 1337 stocks of YPF' do
+      before do
+        agent.set_amount_of_stocks('YPF', '2001-04-01', 1337, 13.3)
+        expect(agent.amount_of('YPF')).to eq(1337)
+      end
+
+      # current implementation might be wrong
+      # sell might depend on price rise comparing dayX with previous day
+      # and not dayX with buy date
+
+      it 'does not sell a stocks if price rose only 1%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(1.0)
+
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(1337)
+      end
+
+      it 'sells a stock if price rose 2%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(2.0)
+
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+
+      it 'sells a stock if price rose 3%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(3.0)
+
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+    end
+
+    context 'price drop' do
+      it 'does not buy a stock if price dropped 0.9%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-0.99)
+
+        expect(agent.amount_of('YPF')).to eq(0)
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+
+      it 'buys a stock if price dropped 1%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-1.0)
+
+        expect(agent.amount_of('YPF')).to eq(0)
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(31)
+      end
+
+      it 'buys a stock if price dropped 2%' do
+        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(-2.0)
+
+        expect(agent.amount_of('YPF')).to eq(0)
+        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(31)
+      end
+    end
+
+    context 'sell' do
+      let(:stocks) { ['YPF', 'GGAL'] }
+
+      before do
+        agent.set_amount_of_stocks('YPF', '2001-04-01', 1337, 13.3)
+        agent.set_amount_of_stocks('GGAL', '2001-04-01', 31337, 13.3)
+        expect(agent.amount_of('YPF')).to eq(1337)
+        expect(agent.amount_of('GGAL')).to eq(31337)
+      end
+
+      it 'sells a stock after 5 days having purchased' do
+        allow_any_instance_of(Stock).to receive(:price_at).and_return(13.00)
+
+        expect(agent.strategy2(Date.parse('2001-04-06'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+
+      it 'sells all stocks at the last day of month' do
+        agent.set_amount_of_stocks('YPF', '2001-04-02', 13, 13.3)
+
+        expect(agent.strategy1(Date.parse('2014-04-30'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
     end
   end
 end
