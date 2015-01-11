@@ -59,7 +59,7 @@ a) buy a stock if the price dropped at least 1% compared to the previous trading
 b) sell a stock if the price rose 2% or more from the previous day
 
 Strategy 2)
-a) buy a stock, if it happens 1a) or if the price is equal to at least twice the average quotation of the share until that date
+a) buy a stock if 1a) happens or if the price is equal to at least twice the average quotation of the share until that date
 b) sell a stock after five days of having purchased
 
 the end execution program should be informed what was the strategy that won more money.
