@@ -26,6 +26,7 @@ class Stock
   end
 
   def price_at(date)
+    return if !@stock_data || !@stock_data[@stock_name]
     @stock_data[@stock_name][date.to_s]
   end
 

@@ -101,6 +101,7 @@ class StockAgent
   def strategy1(date)
     stocks.each do |stock_name|
       stock = Stock.new(stock_name)
+      next unless stock.price_at(date)
 
       price_change_for_purchase = stock.price_change_for_day(date)
 
@@ -127,6 +128,7 @@ class StockAgent
   def strategy2(date)
     stocks.each do |stock_name|
       stock = Stock.new(stock_name)
+      next unless stock.price_at(date)
 
       price_change_for_purchase = stock.price_change_for_day(date)
 
@@ -141,7 +143,7 @@ class StockAgent
       stock_assets(stock_name).each do |buy_date, data|
         price_change_for_sell = stock.price_change_for_day(buy_date, date.to_s)
 
-        if amount_of(stock_name) > 0 && (date-5) >= Date.parse(buy_date)
+        if amount_of(stock_name) > 0 && (date-5 >= Date.parse(buy_date))
           sell(stock_name, buy_date, date)
         end
       end

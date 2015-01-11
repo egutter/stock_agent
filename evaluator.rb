@@ -12,10 +12,10 @@ class Evaluator
     end
 
     # agent1.list_transactions
-    agent2.list_transactions
+    # agent2.list_transactions
 
-    puts "agent1 cash: #{agent1.total_cash}"
-    puts "agent2 cash: #{agent2.total_cash}"
+    # puts "agent1 cash: #{agent1.total_cash}"
+    # puts "agent2 cash: #{agent2.total_cash}"
 
     if agent1.total_cash == agent2.total_cash
       'no winner'
