@@ -8,14 +8,6 @@ class Stock
     (amount.round(2) * price.round(2)).round(2)
   end
 
-  def self.calc_percents(number:, percent: 1)
-    (number / 100.0) * percent
-  end
-
-  def self.diff(value1, value2)
-    (value1 - value2).round(2)
-  end
-
   def self.maximum_purchaseable_amount(cash_limit, price)
     return 0 if !cash_limit.is_a?(Numeric) || !price.is_a?(Numeric) || price <= 0 || cash_limit <= 0
     (cash_limit / price).to_i
