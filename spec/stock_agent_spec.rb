@@ -353,7 +353,44 @@ describe StockAgent do
   end
 
   describe '#strategy2' do
-    it 'buy a stock if the price is equal to at least twice the average quotation of the share until that date'
+    context 'average quotation buy cases' do
+      let(:source_data) {
+                          {
+                            'YPF' => {
+                              '2014-04-01' => 25.0,
+                              '2014-04-02' => 25,
+                              '2014-04-03' => 50,
+                              '2014-04-04' => 10,
+                              '2014-04-05' => 30,
+                              '2014-04-06' => 0.1,
+                              '2014-04-07' => nil,
+                              '2014-04-08' => 100.0,
+                              '2014-04-09' => 26.53,
+                              '2014-04-10' => 26.53,
+                              '2014-04-11' => 26.53
+                            }
+                          }
+                        }
+
+      before do
+        allow(StockHistoryImporter).to receive(:run).and_return(source_data)
+      end
+
+      it 'buy 20 for 50 if the price is equal to at least twice the average quotation of the share' do
+        expect(agent.strategy2(Date.parse('2014-04-03'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(20)
+      end
+
+      it 'dont buy if the price less than twice the average quotation of the share' do
+        expect(agent.strategy2(Date.parse('2014-04-05'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(0)
+      end
+
+      it 'buy 10 for 100 if the price is higher than twice the average quotation of the share' do
+        expect(agent.strategy2(Date.parse('2014-04-08'))).to eq(true)
+        expect(agent.amount_of('YPF')).to eq(10)
+      end
+    end
 
     context 'price drop' do
       it 'does not buy a stock if price dropped 0.9%' do

@@ -136,14 +136,15 @@ class StockAgent
   def strategy2(date)
     stocks.each do |stock_name|
       stock = Stock.new(stock_name)
-      next unless stock.price_at(date)
+      stock_price_today = stock.price_at(date)
+      next unless stock_price_today
 
       price_change = stock.price_change_for_day(current_day: date)
 
       if price_change
         if date.to_s == stock.last_business_day_of_month(date)
           sell_all(date.to_s)
-        elsif price_change <= -1.0
+        elsif price_change <= -1.0 || stock_price_today >= (stock.average_price_until((date-1).to_s) * 2)
           buy(stock_name, date)
         end
       end
