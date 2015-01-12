@@ -142,12 +142,6 @@ describe Stock do
     end
   end
 
-  describe '.price_of' do
-    it 'returns the total price of stocks' do
-      expect(Stock.price_of(10.453, 12.1234)).to eq(126.65)
-    end
-  end
-
   describe '.maximum_purchaseable_amount' do
     context 'when stock price is at $10' do
       it 'returns 100 if cash limit is $1000' do

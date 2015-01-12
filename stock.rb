@@ -4,10 +4,6 @@ class Stock
     @stock_data ||= StockHistoryImporter.run(filename)
   end
 
-  def self.price_of(amount, price)
-    (amount.round(2) * price.round(2)).round(2)
-  end
-
   def self.maximum_purchaseable_amount(cash_limit, price)
     return 0 if !cash_limit.is_a?(Numeric) || !price.is_a?(Numeric) || price <= 0 || cash_limit <= 0
     (cash_limit / price).to_i

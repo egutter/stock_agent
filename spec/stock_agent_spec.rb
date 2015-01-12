@@ -40,6 +40,24 @@ describe StockAgent do
     end
   end
 
+  describe '#price_of' do
+    it 'returns the total price of nil stocks' do
+      expect(agent.price_of(12, 12)).to eq(144.0)
+    end
+
+    it 'returns the total price of stocks' do
+      expect(agent.price_of(10.453, 12.1234)).to eq(126.65)
+    end
+
+    it 'returns the total price of nil stocks' do
+      expect(agent.price_of(nil, 12.1234)).to eq(0)
+    end
+
+    it 'returns the total price of nil stocks' do
+      expect(agent.price_of(12, nil)).to eq(0)
+    end
+  end
+
   describe '#amount_of_stock_purchased_at' do
     before do
       agent.instance_variable_set(:@stocks, {'YPF' => {'2001-01-01'=> {amount: 10}}, 'GGAL' => {}})

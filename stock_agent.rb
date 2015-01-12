@@ -25,6 +25,11 @@ class StockAgent
     @stocks[stock].map{|k,v| v[:amount] }.inject(:+)
   end
 
+  def price_of(amount, price)
+    return 0 if amount.nil? || price.nil?
+    (amount.round(2) * price.round(2)).round(2)
+  end
+
   def amount_of_stock_purchased_at(stock, date)
     return 0 if !stock_assets(stock)[date]
     stock_assets(stock)[date][:amount]
@@ -51,7 +56,7 @@ class StockAgent
   def buy(stock, date, old_balance=@total_cash)
     price           = Stock.new(stock).price_at(date)
     amount          = Stock.maximum_purchaseable_amount(cash_for_purchase, price)
-    price_of_stocks = Stock.price_of(amount, price)
+    price_of_stocks = price_of(amount, price)
 
     if @total_cash >= price_of_stocks && amount > 0
       @total_cash = (old_balance - price_of_stocks).round(2)
@@ -68,7 +73,7 @@ class StockAgent
   def sell(stock, buy_date, sell_date, old_balance=@total_cash)
     price           = Stock.new(stock).price_at(sell_date)
     amount          = amount_of_stock_purchased_at(stock, buy_date)
-    price_of_stocks = Stock.price_of(amount, price)
+    price_of_stocks = price_of(amount, price)
 
     if amount > 0
       @total_cash = (old_balance + price_of_stocks).round(2)
@@ -162,7 +167,7 @@ class StockAgent
 
   def save_transaction(date, stock, action, amount, price, buy_date=nil, old_stock_price=nil)
     _sell_date = " (bought at #{buy_date} for #{old_stock_price})" if buy_date && old_stock_price
-    @transactions << "#{date} #{stock} #{action} #{amount} for #{price} (#{Stock.price_of(amount, price)})#{_sell_date}"
+    @transactions << "#{date} #{stock} #{action} #{amount} for #{price} (#{price_of(amount, price)})#{_sell_date}"
   end
 
   def list_transactions
