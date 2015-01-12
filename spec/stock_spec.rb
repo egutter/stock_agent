@@ -97,12 +97,14 @@ describe Stock do
     end
   end
 
-  describe '#last_business_day_of_month' do
+  context 'business days' do
     let(:source_data) {
                         {
                           'YPF' => {
                             '2014-07-07' => 25.5,
+                            '2014-07-10' => nil,
                             '2014-07-03' => 28.5,
+                            '2014-07-05' => nil,
                             '2014-07-30' => 27.5,
                             '2014-07-31' => nil,
                             '2014-07-02' => 20.1
@@ -110,8 +112,30 @@ describe Stock do
                         }
                       }
 
-    it 'returns the last day of month with data' do
-      expect(stock.last_business_day_of_month(Date.parse('2014-07-02'))).to eq('2014-07-30')
+    describe '#business_days_of_month' do
+      it 'returns a sorted array with business days of month' do
+        expect(stock.business_days_of_month(Date.parse('2014-07-02'))).to eq(["2014-07-02", "2014-07-03", "2014-07-07", "2014-07-30"])
+      end
+
+      it 'returns array business days for given month' do
+        expect(stock.business_days_of_month(Date.parse('2014-08-02'))).to be_empty
+      end
+    end
+
+    describe '#first_business_day_of_month' do
+      it 'returns nil if no data exists for a month' do
+        expect(stock.first_business_day_of_month(Date.parse('2014-08-02'))).to eq(nil)
+      end
+
+      it 'returns the first day of month with data' do
+        expect(stock.first_business_day_of_month(Date.parse('2014-07-02'))).to eq('2014-07-02')
+      end
+    end
+
+    describe '#last_business_day_of_month' do
+      it 'returns the last day of month with data' do
+        expect(stock.last_business_day_of_month(Date.parse('2014-07-02'))).to eq('2014-07-30')
+      end
     end
   end
 

@@ -34,9 +34,17 @@ class Stock
     price_at(prev_day).nil? ? previous_day(prev_day) : prev_day
   end
 
-  def last_business_day_of_month(date)
+  def business_days_of_month(date)
     @stock_data[@stock_name].reject{ |k,v|
       v.nil? || !k.to_s.match(/#{date.year}-#{date.month.to_s.rjust(2, "0")}-\d{2}/)
-    }.keys.sort.last
+    }.keys.sort
+  end
+
+  def first_business_day_of_month(date)
+    business_days_of_month(date).first
+  end
+
+  def last_business_day_of_month(date)
+    business_days_of_month(date).last
   end
 end
