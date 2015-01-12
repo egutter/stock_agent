@@ -36,7 +36,7 @@ class Stock
 
     return if price_at_current_day.nil? || price_at_ref_day.nil?
 
-    (Stock.diff(price_at_current_day, price_at_ref_day) / Stock.calc_percents(number: price_at_ref_day, percent: 1)).round(2)
+    (((price_at_current_day - price_at_ref_day) / price_at_ref_day) * 100).round(2)
   end
 
   def previous_day(date)
