@@ -35,6 +35,38 @@ describe Stock do
     end
   end
 
+  describe '#get_average_price_until' do
+    let(:source_data) {
+                        {
+                          'YPF' => {
+                            '2014-04-01' => 1,
+                            '2014-04-02' => 1.5,
+                            '2014-04-03' => 1.00,
+                            '2014-04-04' => 0,
+                            '2014-04-05' => 1,
+                            '2014-04-06' => 1,
+                            '2014-04-07' => nil,
+                            '2014-04-08' => 1,
+                            '2014-04-09' => 1,
+                            '2014-04-10' => 1,
+                            '2014-04-11' => 100
+                          }
+                        }
+                      }
+
+    it 'returns average of 0,875 until the 6th april' do
+      expect(stock.get_average_price_until('2014-04-04')).to eq(0.875)
+    end
+
+    it 'returns average of 0,929 until the 6th april' do
+      expect(stock.get_average_price_until('2014-04-08')).to eq(0.929)
+    end
+
+    it 'returns average of 10.85 until the 6th april' do
+      expect(stock.get_average_price_until('2014-04-11')).to eq(10.85)
+    end
+  end
+
   describe '#price_change_for_day' do
     before do
       allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)

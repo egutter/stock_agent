@@ -22,6 +22,17 @@ class Stock
     (((price_at_current_day - price_at_ref_day) / price_at_ref_day) * 100).round(2)
   end
 
+  def get_average_price_until(date)
+    price_list     = business_days_of_month(date).reject{|bday| bday > date }
+      .map{ |bday| price_at(bday) }
+    price_size     = price_list.size
+    price_list_sum = price_list.inject(0.0) { |sum, el| sum + el }
+
+    return if !price_size || price_size == 0
+
+    (price_list_sum / price_size).round(3)
+  end
+
   def previous_day(date)
     return if date.day == 1
     prev_day = date - 1
@@ -30,6 +41,7 @@ class Stock
   end
 
   def business_days_of_month(date)
+    date = Date.parse(date) if date.class == String
     @stock_data[@stock_name].reject{ |k,v|
       v.nil? || !k.to_s.match(/#{date.year}-#{date.month.to_s.rjust(2, "0")}-\d{2}/)
     }.keys.sort
