@@ -22,7 +22,7 @@ class Stock
     (((price_at_current_day - price_at_ref_day) / price_at_ref_day) * 100).round(2)
   end
 
-  def get_average_price_until(date)
+  def average_price_until(date)
     price_list     = business_days_of_month(date).reject{|bday| bday > date }
       .map{ |bday| price_at(bday) }
     price_size     = price_list.size
