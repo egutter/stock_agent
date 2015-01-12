@@ -128,12 +128,12 @@ class StockAgent
       stock = Stock.new(stock_name)
       next unless stock.price_at(date)
 
-      price_change_for_purchase = stock.price_change_for_day(current_day: date)
+      price_change = stock.price_change_for_day(current_day: date)
 
-      if price_change_for_purchase
+      if price_change
         if date.to_s == stock.last_business_day_of_month(date)
           sell_all(date.to_s)
-        elsif price_change_for_purchase <= -1.0
+        elsif price_change <= -1.0
           buy(stock_name, date)
         end
       end
