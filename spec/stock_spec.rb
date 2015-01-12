@@ -165,42 +165,4 @@ describe Stock do
       expect(stock.previous_day(Date.parse('2014-07-04'))).to eq(nil)
     end
   end
-
-  describe '.maximum_purchaseable_amount' do
-    context 'when stock price is at $10' do
-      it 'returns 100 if cash limit is $1000' do
-        expect(Stock.maximum_purchaseable_amount(1000.00, 10)).to eq(100)
-      end
-
-      it 'returns 0 if cash limit is $0' do
-        expect(Stock.maximum_purchaseable_amount(0, 10)).to eq(0)
-      end
-
-      it 'returns 100 if cash limit is -$100' do
-        expect(Stock.maximum_purchaseable_amount(-100, 10)).to eq(0)
-      end
-
-      it 'returns 0 if cash limit is nil' do
-        expect(Stock.maximum_purchaseable_amount(nil, 10)).to eq(0)
-      end
-    end
-
-    context 'when cash limit is at $1000' do
-      it 'returns 0 if stock price is at -$10' do
-        expect(Stock.maximum_purchaseable_amount(1000.00, -10)).to eq(0)
-      end
-
-      it 'returns 0 if stock price is at $0' do
-        expect(Stock.maximum_purchaseable_amount(1000.00, 0)).to eq(0)
-      end
-
-      it 'returns 0 if stock price is at $26' do
-        expect(Stock.maximum_purchaseable_amount(1000.00, 26)).to eq(38)
-      end
-
-      it 'returns 0 if stock price is at nil' do
-        expect(Stock.maximum_purchaseable_amount(1000.00, nil)).to eq(0)
-      end
-    end
-  end
 end

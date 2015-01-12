@@ -10,6 +10,46 @@ describe StockAgent do
     end
   end
 
+
+  describe '#maximum_purchaseable_amount' do
+    context 'when price is at $10' do
+      it 'returns 100 if cash limit is $1000' do
+        expect(agent.maximum_purchaseable_amount(1000.00, 10)).to eq(100)
+      end
+
+      it 'returns 0 if cash limit is $0' do
+        expect(agent.maximum_purchaseable_amount(0, 10)).to eq(0)
+      end
+
+      it 'returns 100 if cash limit is -$100' do
+        expect(agent.maximum_purchaseable_amount(-100, 10)).to eq(0)
+      end
+
+      it 'returns 0 if cash limit is nil' do
+        expect(agent.maximum_purchaseable_amount(nil, 10)).to eq(0)
+      end
+    end
+
+    context 'when cash limit is at $1000' do
+      it 'returns 0 if price is at -$10' do
+        expect(agent.maximum_purchaseable_amount(1000.00, -10)).to eq(0)
+      end
+
+      it 'returns 0 if price is at $0' do
+        expect(agent.maximum_purchaseable_amount(1000.00, 0)).to eq(0)
+      end
+
+      it 'returns 0 if price is at $26' do
+        expect(agent.maximum_purchaseable_amount(1000.00, 26)).to eq(38)
+      end
+
+      it 'returns 0 if price is at nil' do
+        expect(agent.maximum_purchaseable_amount(1000.00, nil)).to eq(0)
+      end
+    end
+  end
+
+
   describe '#total_cash' do
     it 'gets initialized with 1 million' do
       expect(agent.total_cash).to eq(1000000.00)

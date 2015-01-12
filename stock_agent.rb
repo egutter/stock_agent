@@ -35,6 +35,11 @@ class StockAgent
     stock_assets(stock)[date][:amount]
   end
 
+  def maximum_purchaseable_amount(cash_limit, price)
+    return 0 if !cash_limit.is_a?(Numeric) || !price.is_a?(Numeric) || price <= 0 || cash_limit <= 0
+    (cash_limit / price).to_i
+  end
+
   def set_amount_of_stocks(stock, date, amount, price)
     _date = date.to_s
 
@@ -55,7 +60,7 @@ class StockAgent
 
   def buy(stock, date, old_balance=@total_cash)
     price           = Stock.new(stock).price_at(date)
-    amount          = Stock.maximum_purchaseable_amount(cash_for_purchase, price)
+    amount          = maximum_purchaseable_amount(cash_for_purchase, price)
     price_of_stocks = price_of(amount, price)
 
     if @total_cash >= price_of_stocks && amount > 0
