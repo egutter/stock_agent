@@ -103,21 +103,19 @@ class StockAgent
       stock = Stock.new(stock_name)
       next unless stock.price_at(date)
 
-      price_change_for_purchase = stock.price_change_for_day(date)
+      price_change = stock.price_change_for_day(current_day: date)
 
-      if price_change_for_purchase
+      if price_change
         if date.to_s == stock.last_business_day_of_month(date)
           sell_all(date.to_s)
-        elsif price_change_for_purchase <= -1.0
+        elsif price_change <= -1.0
           buy(stock_name, date)
         end
-      end
 
-      stock_assets(stock_name).each do |buy_date, data|
-        price_change_for_sell = stock.price_change_for_day(buy_date, date)
-
-        if amount_of(stock_name) > 0 && price_change_for_sell && price_change_for_sell >= 2.0
-          sell(stock_name, buy_date, date)
+        stock_assets(stock_name).each do |buy_date, data|
+          if data[:amount] > 0 && price_change >= 2.0
+            sell(stock_name, buy_date, date)
+          end
         end
       end
     end
@@ -130,7 +128,7 @@ class StockAgent
       stock = Stock.new(stock_name)
       next unless stock.price_at(date)
 
-      price_change_for_purchase = stock.price_change_for_day(date)
+      price_change_for_purchase = stock.price_change_for_day(current_day: date)
 
       if price_change_for_purchase
         if date.to_s == stock.last_business_day_of_month(date)
@@ -141,9 +139,7 @@ class StockAgent
       end
 
       stock_assets(stock_name).each do |buy_date, data|
-        price_change_for_sell = stock.price_change_for_day(buy_date, date.to_s)
-
-        if amount_of(stock_name) > 0 && (date-5 >= Date.parse(buy_date))
+        if data[:amount] > 0 && (date-5 >= Date.parse(buy_date))
           sell(stock_name, buy_date, date)
         end
       end

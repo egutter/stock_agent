@@ -30,7 +30,7 @@ class Stock
     @stock_data[@stock_name][date.to_s]
   end
 
-  def price_change_for_day(current_day, ref_day=nil)
+  def price_change_for_day(current_day:, ref_day:nil)
     price_at_current_day = price_at(current_day)
     price_at_ref_day     = price_at(ref_day || previous_day(current_day))
 

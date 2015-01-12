@@ -107,33 +107,64 @@ describe Stock do
 
 
   describe '#price_change_for_day' do
-    it 'returns price change of 1% compare to previous day' do
+    before do
       allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
-      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
-
-      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(1.0)
     end
 
-    it 'returns nil if previous day provides no data' do
-      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(nil)
-      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
-      allow(stock).to receive(:price_at).with(nil).and_return(nil)
+    context 'using default ref_day param (previous day)' do
+      it 'returns price change of 1%' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
 
-      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(nil)
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-02'))).to eq(1.0)
+      end
+
+      it 'returns nil if previous day provides no data' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(nil)
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
+        allow(stock).to receive(:price_at).with(nil).and_return(nil)
+
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-02'))).to eq(nil)
+      end
+
+      it 'returns nil if day provides no data' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(nil)
+
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-02'))).to eq(nil)
+      end
+
+      it 'returns 0.0% price is consistent' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.0)
+
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-02'))).to eq(0.0)
+      end
     end
 
-    it 'returns nil if day provides no data' do
-      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
-      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(nil)
+    context 'using ref_day param' do
+      it 'returns price change of 1%' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
 
-      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(nil)
-    end
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-02'))).to eq(1.0)
+      end
 
-    it 'returns 0.0% price is consistent' do
-      allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
-      allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.0)
+      it 'returns nil if previous day provides no data' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(nil)
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(26.26)
+        allow(stock).to receive(:price_at).with(nil).and_return(nil)
 
-      expect(stock.price_change_for_day(Date.parse('2014-07-02'))).to eq(0.0)
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-02'))).to eq(nil)
+      end
+
+      it 'returns nil if day provides no data' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-02')).and_return(nil)
+
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-02'), ref_day: Date.parse('2014-07-01'))).to eq(nil)
+      end
+
+      it 'returns 0.0% price is consistent' do
+        allow(stock).to receive(:price_at).with(Date.parse('2014-07-04')).and_return(26.0)
+
+        expect(stock.price_change_for_day(current_day: Date.parse('2014-07-04'), ref_day: Date.parse('2014-07-01'))).to eq(0.0)
+      end
     end
   end
 

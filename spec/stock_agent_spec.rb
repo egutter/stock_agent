@@ -224,33 +224,36 @@ describe StockAgent do
 
   describe '#strategy1' do
     context 'has 1337 stocks of YPF' do
+      let(:source_data)  {
+                        {
+                          'YPF' => {
+                            '2014-04-01' => 25.0,
+                            '2014-04-02' => 25.25,
+                            '2014-04-03' => 25.76,
+                            '2014-04-04' => 26.53
+                          }
+                        }
+                      }
+
       before do
         agent.set_amount_of_stocks('YPF', '2001-04-01', 1337, 13.3)
         expect(agent.amount_of('YPF')).to eq(1337)
+
+        allow(StockHistoryImporter).to receive(:run).and_return(source_data)
       end
 
-      # current implementation might be wrong
-      # sell might depend on price rise comparing dayX with previous day
-      # and not dayX with buy date
-
       it 'does not sell a stocks if price rose only 1%' do
-        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(1.0)
-
         expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
         expect(agent.amount_of('YPF')).to eq(1337)
       end
 
       it 'sells a stock if price rose 2%' do
-        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(2.0)
-
-        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.strategy1(Date.parse('2014-04-03'))).to eq(true)
         expect(agent.amount_of('YPF')).to eq(0)
       end
 
       it 'sells a stock if price rose 3%' do
-        allow_any_instance_of(Stock).to receive(:price_change_for_day).and_return(3.0)
-
-        expect(agent.strategy1(Date.parse('2014-04-02'))).to eq(true)
+        expect(agent.strategy1(Date.parse('2014-04-04'))).to eq(true)
         expect(agent.amount_of('YPF')).to eq(0)
       end
     end
