@@ -4,8 +4,12 @@ class StockAgent
   def initialize(stocks, start_cash=1000000.00)
     @total_cash   = start_cash
     @transactions = []
-    @stocks = {}
+    @stocks       = {}
     stocks.each { |stock| @stocks[stock] = {} }
+  end
+
+  def stock_market
+    @stock_market ||= StockMarket.new
   end
 
   def stocks
@@ -59,7 +63,7 @@ class StockAgent
   end
 
   def buy(stock, date, old_balance=@total_cash)
-    price           = Stock.new(stock).price_at(date)
+    price           = stock_market.get(stock).price_at(date)
     amount          = maximum_purchaseable_amount(cash_for_purchase, price)
     price_of_stocks = price_of(amount, price)
 
@@ -76,11 +80,12 @@ class StockAgent
   end
 
   def sell(stock, buy_date, sell_date, old_balance=@total_cash)
-    price           = Stock.new(stock).price_at(sell_date)
     amount          = amount_of_stock_purchased_at(stock, buy_date)
-    price_of_stocks = price_of(amount, price)
 
     if amount > 0
+      price           = stock_market.get(stock).price_at(sell_date)
+      price_of_stocks = price_of(amount, price)
+
       @total_cash = (old_balance + price_of_stocks).round(2)
 
       save_transaction(sell_date, stock, :sell, amount, price, buy_date, stock_assets(stock)[buy_date][:price])
@@ -110,12 +115,10 @@ class StockAgent
 
   def strategy1(date)
     stocks.each do |stock_name|
-      stock = Stock.new(stock_name)
+      stock = stock_market.get(stock_name)
       next unless stock.price_at(date)
 
-      price_change = stock.price_change_for_day(current_day: date)
-
-      if price_change
+      if price_change = stock.price_change_for_day(current_day: date)
         if date.to_s == stock.last_business_day_of_month(date)
           sell_all(date.to_s)
         elsif price_change <= -1.0
@@ -135,16 +138,14 @@ class StockAgent
 
   def strategy2(date)
     stocks.each do |stock_name|
-      stock = Stock.new(stock_name)
+      stock             = stock_market.get(stock_name)
       stock_price_today = stock.price_at(date)
       next unless stock_price_today
 
-      price_change = stock.price_change_for_day(current_day: date)
-
-      if price_change
+      if price_change = stock.price_change_for_day(current_day: date)
         if date.to_s == stock.last_business_day_of_month(date)
           sell_all(date.to_s)
-        elsif price_change <= -1.0 || stock_price_today >= (stock.average_price_until((date-1).to_s) * 2)
+        elsif price_change <= -1.0 || stock_price_today >= (stock.average_price_until(date-1) * 2)
           buy(stock_name, date)
         end
       end
