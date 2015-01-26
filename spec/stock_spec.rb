@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Stock do
-  let(:stock) { Stock.new('YPF') }
+  let(:stock) { Stock.new(source_data, 'YPF') }
   let(:source_data)  {
                         {
                           'YPF' => {
@@ -25,7 +25,7 @@ describe Stock do
     end
 
     it 'loads the stock_data on initialize' do
-      expect(stock.instance_variable_get("@stock_data")).to be_a(Hash)
+      expect(stock.instance_variable_get("@data")).to be_a(Hash)
     end
   end
 
@@ -55,15 +55,15 @@ describe Stock do
                       }
 
     it 'returns average of 0,875 until the 6th april' do
-      expect(stock.average_price_until('2014-04-04')).to eq(0.875)
+      expect(stock.average_price_until(Date.parse('2014-04-04'))).to eq(0.875)
     end
 
     it 'returns average of 0,929 until the 6th april' do
-      expect(stock.average_price_until('2014-04-08')).to eq(0.929)
+      expect(stock.average_price_until(Date.parse('2014-04-08'))).to eq(0.929)
     end
 
     it 'returns average of 10.85 until the 6th april' do
-      expect(stock.average_price_until('2014-04-11')).to eq(10.85)
+      expect(stock.average_price_until(Date.parse('2014-04-11'))).to eq(10.85)
     end
   end
 

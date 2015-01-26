@@ -1,16 +1,14 @@
 class Stock
-  def initialize(stock_name, filename = 'stock_history.csv')
-    @stock_name = stock_name
-    @stock_data ||= StockHistoryImporter.run(filename)
+  def initialize(stock_history, name)
+    @data = stock_history
+    @name = name
   end
 
-  def name
-    @stock_name
-  end
+  def name; @name; end
+  def data; @data; end
 
   def price_at(date)
-    return if !@stock_data || !@stock_data[@stock_name]
-    @stock_data[@stock_name][date.to_s]
+    data[name][date.to_s]
   end
 
   def price_change_for_day(current_day:, ref_day:nil)
@@ -23,7 +21,9 @@ class Stock
   end
 
   def average_price_until(date)
-    price_list     = business_days_of_month(date).reject{|bday| bday > date }
+    return unless date.is_a?(Date)
+
+    price_list     = business_days_of_month(date).reject{|bday| bday > date.to_s }
       .map{ |bday| price_at(bday) }
     price_size     = price_list.size
     price_list_sum = price_list.inject(0.0) { |sum, el| sum + el }
@@ -36,13 +36,11 @@ class Stock
   def previous_day(date)
     return if date.day == 1
     prev_day = date - 1
-
     price_at(prev_day).nil? ? previous_day(prev_day) : prev_day
   end
 
   def business_days_of_month(date)
-    date = Date.parse(date) if date.class == String
-    @stock_data[@stock_name].reject{ |k,v|
+    data[name].reject{ |k,v|
       v.nil? || !k.to_s.match(/#{date.year}-#{date.month.to_s.rjust(2, "0")}-\d{2}/)
     }.keys.sort
   end
