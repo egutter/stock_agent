@@ -25,8 +25,7 @@ class StockAgent
   end
 
   def amount_of(stock)
-    return 0 if @stocks[stock].empty?
-    @stocks[stock].map{|k,v| v[:amount] }.inject(:+)
+    stock_assets(stock).map{|k,v| v[:amount] }.inject(:+) || 0
   end
 
   def price_of(amount, price)
