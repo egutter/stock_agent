@@ -1,10 +1,13 @@
 require 'spec_helper'
 
 describe Stock do
+  # Why does a Stock receives the source data with all stocks quotes and also a name of a given stock? Wouldn't be better to just receive the
+  # stock quote history of the stock we are interested of?
   let(:stock) { Stock.new(source_data, 'YPF') }
   let(:source_data)  {
                         {
                           'YPF' => {
+                            #  Why use Strings to represent dates?
                             '2014-07-01' => 25.5,
                             '2014-07-02' => 28.5,
                           },
@@ -21,10 +24,15 @@ describe Stock do
 
   describe '#new' do
     it 'returns an instance of stock' do
+      # Is this spec useful? Which is the value it adds? Seems to be validating that the Ruby VM instantiate an object properly
       expect(stock).to be_a(Stock)
     end
 
     it 'loads the stock_data on initialize' do
+      # This spec seems to break the encapsulation of the Stock object. The idea behind of encapsulation is that we can change the internal behaviour
+      # of an object without affecting the rest of the system. This spec is not black-box and will fail
+      # if Stock decides to represent data with something different than a Hash or just rename the variable
+
       expect(stock.instance_variable_get("@data")).to be_a(Hash)
     end
   end
@@ -55,6 +63,7 @@ describe Stock do
                       }
 
     it 'returns average of 0,875 until the 6th april' do
+      # The API is not very consistent, before it requires Strings and in other methods requires Dates
       expect(stock.average_price_until(Date.parse('2014-04-04'))).to eq(0.875)
     end
 
@@ -69,6 +78,8 @@ describe Stock do
 
   describe '#price_change_for_day' do
     before do
+      # Do we really need to use a mock for such a simple class as Stock? Here are breaking the encapsulation of the price_change_for_day implementation
+      # given that if the implementation changes and stop using price_at the test will fail, although the expected behavior might still be correct
       allow(stock).to receive(:price_at).with(Date.parse('2014-07-01')).and_return(26.0)
     end
 

@@ -1,11 +1,15 @@
 require 'spec_helper'
 
+# By the length of the spec it's possible to do some quick evaluations
+# - Almost all the interesting stuff happens on the Stock Agent
+# - The Stock Agent has too many responsibilities, thus breaking the Single Responsibility Principle
 describe StockAgent do
   let(:stocks) { ['YPF'] }
   let(:agent)  { StockAgent.new(stocks) }
 
   describe '#new' do
     it 'initializes an instance of Agent' do
+      # Is this spec useful? Which is the value it adds? Seems to be validating that the Ruby VM instantiate an object properly
       expect(agent).to be_a(StockAgent)
     end
   end

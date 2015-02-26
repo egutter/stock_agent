@@ -1,5 +1,19 @@
 require 'pry'
 
+# what are the responsibilities of a Stock Agent?
+# Looks like:
+# - A stock agent knows the market
+# - A stock agent knows all the stocks bought
+# - A stock agent knows how to buy or sell a stock
+# - A stock agent calculates the total amount of the stocks bought
+# - A stock agent knows the different strategies to buy/sell stocks
+# etc.etc
+# Would be better to extract some of this behavior to other Objects and just make the Agent collaborate with those objects?
+# For example:
+# Portfolio: stocks bought by the agent
+# Sell and Buy operations: logic to buy or sell a stock
+# Trading Strategy: logic for a specific strategy
+
 class StockAgent
   def initialize(stocks, start_cash=1000000.00)
     @total_cash   = start_cash
@@ -135,6 +149,8 @@ class StockAgent
     return true
   end
 
+  # If you compare side by side both strategies you can see the code is very similar. Can this code duplication be avoided?
+  # Might some other objects be missing which could encapsulate the common behaviour to be reused?
   def strategy2(date)
     stocks.each do |stock_name|
       stock             = stock_market.get(stock_name)

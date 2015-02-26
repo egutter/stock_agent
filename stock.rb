@@ -1,9 +1,13 @@
+# The first time I look at the class I was a bit confused between the class name and the implementation.
+# Is it possible that a better name for this class could be StockQuoteHistory or HistoricalStockPrice or something similar?
 class Stock
   def initialize(stock_history, name)
     @data = stock_history
     @name = name
   end
 
+  # Wouldn't be better to use attr_reader ?
+  # Or if the variables are only accessed internally, why not just use them directly with the '@' sign?
   def name; @name; end
   def data; @data; end
 
@@ -11,6 +15,8 @@ class Stock
     data[name][date.to_s]
   end
 
+  # I am not sure why you need to receive the ref day if you are always looking to get the price change from one quote to the next one.
+  # Might be because the quote history is a hash instead of an array and it's not ordered ?
   def price_change_for_day(current_day:, ref_day:nil)
     price_at_current_day = price_at(current_day)
     price_at_ref_day     = price_at(ref_day || previous_day(current_day))
